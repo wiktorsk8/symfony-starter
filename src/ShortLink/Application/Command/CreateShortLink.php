@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\ShortLink\Application\Command;
 
-readonly class CreateShortLink
+use App\Shared\Application\Command\Command;
+
+readonly class CreateShortLink implements Command
 {
     public function __construct(
         public string $id,

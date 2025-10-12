@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\ShortLink\Application\Command;
 
+use App\Shared\Application\Command\CommandHandler;
 use App\ShortLink\Application\Events\ShortLinkCreated;
 use App\ShortLink\Application\Exceptions\CreateShortLinkException;
 use App\ShortLink\Application\Exceptions\GenerateSlugException;
@@ -13,7 +14,7 @@ use App\ShortLink\Infrastructure\Doctrine\Entity\ShortLink;
 use App\ShortLink\Infrastructure\Doctrine\Repository\ShortLinkRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class CreateShortLinkHandler
+class CreateShortLinkHandler implements CommandHandler
 {
     public function __construct(
         protected ShortLinkRepository $repository,
@@ -26,7 +27,7 @@ class CreateShortLinkHandler
     /**
      * @throws CreateShortLinkException
      */
-    public function handle(CreateShortLink $command): void
+    public function __invoke(CreateShortLink $command): void
     {
         try {
             $slug = $this->linkShortenerService->generateSlug($command->url);

@@ -7,6 +7,7 @@
         "php": ">=8.3",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "ext-openssl": "*",
         "doctrine/dbal": "^3",
         "doctrine/doctrine-bundle": "^2.15",
         "doctrine/doctrine-migrations-bundle": "^3.4",
@@ -21,8 +22,7 @@
         "symfony/framework-bundle": "7.3.*",
         "symfony/messenger": "7.3.*",
         "symfony/runtime": "7.3.*",
-        "symfony/yaml": "7.3.*",
-        "ext-openssl": "*"
+        "symfony/yaml": "7.3.*"
     },
     "config": {
         "allow-plugins": {

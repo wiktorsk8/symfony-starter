@@ -1,8 +1,11 @@
 framework:
     messenger:
-        # Uncomment this (and the failed transport below) to send failed messages to this transport for later handling.
-        # failure_transport: failed
-
+        default_bus: command.bus
+        buses:
+            command.bus:
+                middleware:
+                    - doctrine_close_connection
+                    - doctrine_transaction
         transports:
             # https://symfony.com/doc/current/messenger.html#transport-configuration
             # async: '%env(MESSENGER_TRANSPORT_DSN)%'
@@ -20,3 +23,4 @@ framework:
 #                # replace with your transport name here (e.g., my_transport: 'in-memory://')
 #                # For more Messenger testing tools, see https://github.com/zenstruck/messenger-test
 #                async: 'in-memory://'
+

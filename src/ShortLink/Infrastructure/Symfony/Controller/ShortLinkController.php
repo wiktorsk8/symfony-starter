@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\ShortLink\Infrastructure\Symfony\Controller;
 
+use App\Shared\Infrastructure\Symfony\Messenger\CommandBus;
 use App\ShortLink\Application\Command\CreateShortLinkHandler;
 use App\ShortLink\Application\Exceptions\GetUrlException;
 use App\ShortLink\Application\Queries\GetShortLinkQuery;
@@ -15,32 +16,29 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Throwable;
 
 class ShortLinkController extends AbstractController
 {
-    public function __construct(
-        private readonly EntityManagerInterface $em
-    ) {}
-
+    /**
+     * @throws Throwable
+     */
     #[Route('/api/short_links', methods: ['POST'])]
     public function createShortLink(
         Request $request,
-        CreateShortLinkHandler $createShortLinkHandler,
+        CommandBus $commandBus,
     ): JsonResponse {
         $command = CreateShortLink::fromHttp($request)->toCommand();
 
-        $this->em->beginTransaction();
         try {
-            $createShortLinkHandler->handle($command);
-        } catch (\Exception $e) {
-            $this->em->rollback();
+            $commandBus->dispatch($command);
+        } catch (\Exception|ExceptionInterface $e) {
             return new JsonResponse([
                 "message" => $e->getMessage(),
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        $this->em->commit();
 
         return new JsonResponse([
             'id' => $command->id,

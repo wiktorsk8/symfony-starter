@@ -14,14 +14,12 @@ RUN apt-get update && apt-get install -y unzip libzip-dev \
     && docker-php-ext-install pcntl \
     && docker-php-ext-install bcmath
 
+
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+ENV COMPOSER_ALLOW_SUPERUSER=1
 
 COPY . .
-
-RUN chown -R www-data:www-data /app
-
-USER www-data
 
 EXPOSE 8000
 
