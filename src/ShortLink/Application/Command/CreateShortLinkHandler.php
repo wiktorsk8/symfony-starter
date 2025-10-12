@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\ShortLink\Application\Command;
 
 use App\ShortLink\Application\Events\ShortLinkCreated;
+use App\ShortLink\Application\Exceptions\CreateShortLinkException;
+use App\ShortLink\Application\Exceptions\GenerateSlugException;
 use App\ShortLink\Application\Service\LinkShortenerService;
 use App\ShortLink\Infrastructure\Cache\Repositories\ShortLinkCacheRepository;
 use App\ShortLink\Infrastructure\Doctrine\Entity\ShortLink;
@@ -21,19 +23,22 @@ class CreateShortLinkHandler
     ) {
     }
 
+    /**
+     * @throws CreateShortLinkException
+     */
     public function handle(CreateShortLink $command): void
     {
-        $count = $this->repository->getCountWithLock();
+        try {
+            $slug = $this->linkShortenerService->generateSlug($command->url);
+        } catch (GenerateSlugException $e) {
+            throw new CreateShortLinkException($e->getMessage(), $e->getCode(), $e);
+        }
 
-        $count++;
-
-        $slug = $this->linkShortenerService->generateSlug($count);
         $shortLink = new ShortLink();
 
         $shortLink->setId($command->id);
         $shortLink->setUrl($command->url);
         $shortLink->setSlug($slug);
-        $shortLink->setCount($count);
 
         $this->repository->save($shortLink, true);
 

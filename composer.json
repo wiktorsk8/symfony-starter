@@ -13,7 +13,7 @@
         "doctrine/migrations": "^3.9",
         "doctrine/orm": "^3.5",
         "ramsey/uuid": "^4.9",
-        "runtime/frankenphp-symfony": "*",
+        "runtime/frankenphp-symfony": "^0.2.0",
         "symfony/cache": "7.3.*",
         "symfony/console": "7.3.*",
         "symfony/dotenv": "7.3.*",
@@ -21,7 +21,8 @@
         "symfony/framework-bundle": "7.3.*",
         "symfony/messenger": "7.3.*",
         "symfony/runtime": "7.3.*",
-        "symfony/yaml": "7.3.*"
+        "symfony/yaml": "7.3.*",
+        "ext-openssl": "*"
     },
     "config": {
         "allow-plugins": {

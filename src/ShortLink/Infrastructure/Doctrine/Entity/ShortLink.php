@@ -22,10 +22,6 @@ class ShortLink
     #[ORM\Column(type: 'string', length: 255)]
     private string $url;
 
-    #[ORM\Column(type: 'integer')]
-    private int $count;
-
-
     public function getId(): string
     {
         return $this->id;
@@ -42,16 +38,6 @@ class ShortLink
     public function getUrl(): string
     {
         return $this->url;
-    }
-
-    public function getCount(): int
-    {
-        return $this->count;
-    }
-
-    public function setCount(int $count): void
-    {
-        $this->count = $count;
     }
 
     public function setId(string $id): void

@@ -46,23 +46,4 @@ class ShortLinkRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
-
-    public function getCountWithLock(): int
-    {
-        $query = $this->createQueryBuilder('s')
-            ->select('s.count')
-            ->orderBy('s.count', 'DESC')
-            ->setMaxResults(1)
-            ->getQuery();
-
-        $query->setLockMode(LockMode::PESSIMISTIC_WRITE);
-
-        $result = $query->getOneOrNullResult();
-
-        if (null !== $result) {
-            return (int)$result['count'];
-        }
-
-        return 0;
-    }
 }

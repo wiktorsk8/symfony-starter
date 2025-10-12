@@ -4,26 +4,54 @@ declare(strict_types=1);
 
 namespace App\ShortLink\Application\Service;
 
+use App\ShortLink\Application\Exceptions\GenerateSlugException;
+use App\ShortLink\Infrastructure\Doctrine\Repository\ShortLinkRepository;
+use Symfony\Component\Cache\Adapter\RedisAdapter;
+use Symfony\Contracts\Cache\CacheInterface;
+
 class LinkShortenerService
 {
-    private const string CHARS = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-    public function generateSlug(int $seqNumber): string
-    {
-        return $this->toBase62($seqNumber);
+    public function __construct(
+        protected CacheInterface $cache,
+        protected ShortLinkRepository $shortLinkRepository,
+    ) {
     }
 
-    private function toBase62(int $number): string
+    /**
+     * @throws GenerateSlugException
+     */
+    public function generateSlug(string $url): string
     {
-        $size = strlen(self::CHARS);
-        $result = '';
-
-        while ($number > 0) {
-            $reminder = $number % $size;
-            $result .= self::CHARS[$reminder];
-            $number = intval($number / $size);
+        try {
+            $slug = $this->getHash($url);
+        } catch (\Exception $e) {
+            throw new GenerateSlugException($e->getMessage(), $e->getCode(), $e);
         }
 
-        return $result;
+        $collision = $this->checkDatabaseCollision($slug);
+
+        if ($collision) {
+            return $this->generateSlug($url);
+        }
+
+        return $slug;
+    }
+
+    private function getHash(string $url): string
+    {
+        $salt = openssl_random_pseudo_bytes(5);
+        $hash = md5($salt . $url);
+        return substr($hash, 0, 7);
+    }
+
+    private function checkDatabaseCollision(string $slug): bool
+    {
+        $shortLink = $this->shortLinkRepository->findBySlug($slug);
+
+        if (null === $shortLink) {
+            return false;
+        }
+
+        return true;
     }
 }
