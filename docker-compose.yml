@@ -1,0 +1,34 @@
+services:
+    #    symfony-api:
+    #        container_name: symfony-api
+    #        build: .
+    #        ports:
+    #            - "8000:80"
+    #        volumes:
+    #            - .:/app
+    #        depends_on:
+    #            - mysql-db
+    #        networks:
+    #            - backend
+
+    postgres-db:
+        container_name: postgres-db
+        image: postgres:latest
+        environment:
+            POSTGRES_USER: db_user
+            POSTGRES_PASSWORD: "!ChangeMe!"
+            POSTGRES_DB: postgres-db
+        ports:
+            - "5432:5432"
+        networks:
+            - backend
+        volumes:
+            - db:/data/postgres
+
+networks:
+    backend:
+        name: backend-network
+        driver: bridge
+
+volumes:
+    db:
