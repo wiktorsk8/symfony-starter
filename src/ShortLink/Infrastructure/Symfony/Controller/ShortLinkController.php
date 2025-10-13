@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace App\ShortLink\Infrastructure\Symfony\Controller;
 
 use App\Shared\Infrastructure\Symfony\Messenger\CommandBus;
-use App\ShortLink\Application\Command\CreateShortLinkHandler;
 use App\ShortLink\Application\Exceptions\GetUrlException;
-use App\ShortLink\Application\Queries\GetShortLinkQuery;
+use App\ShortLink\Application\Queries\GetShortLink;
 use App\ShortLink\Application\Queries\GetUrlQuery;
 use App\ShortLink\Infrastructure\Symfony\Request\CreateShortLink;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -48,7 +46,7 @@ class ShortLinkController extends AbstractController
     #[Route('/api/short_links/{shortLinkId}', methods: ['GET'])]
     public function getShortLink(
         string $shortLinkId,
-        GetShortLinkQuery $getShortLinkQuery
+        GetShortLink $getShortLinkQuery
     ): JsonResponse {
         $dto = $getShortLinkQuery->execute($shortLinkId);
         if (!$dto) {
