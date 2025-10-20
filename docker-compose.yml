@@ -1,29 +1,42 @@
 services:
-    #    symfony-api:
-    #        container_name: symfony-api
-    #        build: .
-    #        ports:
-    #            - "8000:80"
-    #        volumes:
-    #            - .:/app
-    #        depends_on:
-    #            - mysql-db
-    #        networks:
-    #            - backend
+    symfony-api:
+        container_name: symfony-api
+        build:
+            context: .
+            target: frankenphp_dev
+        ports:
+            - "8000:80"
+            - "4443:443"
+        volumes:
+            - ./:/app
+            - ./frankenphp/Caddyfile:/etc/frankenphp/Caddyfile:ro
+            - ./frankenphp/conf.d/20-app.dev.ini:/usr/local/etc/php/app.conf.d/20-app.dev.ini:ro
+        depends_on:
+            - postgres-db
+        networks:
+            - backend
+        environment:
+            - SERVER_NAME=:80
+            - FRANKENPHP_WORKER_CONFIG=watch
+    # Configured in Caddyfile           - APP_RUNTIME=Runtime\\FrankenPhpSymfony\\Runtime
+        extra_hosts:
+            - host.docker.internal:host-gateway
 
     postgres-db:
         container_name: postgres-db
         image: postgres:latest
         environment:
-            POSTGRES_USER: db_user
-            POSTGRES_PASSWORD: "!ChangeMe!"
-            POSTGRES_DB: postgres-db
+            POSTGRES_USER: "${DB_USER}"
+            POSTGRES_PASSWORD: "${DB_PASSWORD}"
+            POSTGRES_DB: "${DB_NAME}"
         ports:
-            - "5432:5432"
+            - "${DB_PORT}:5432"
         networks:
             - backend
         volumes:
             - db:/data/postgres
+            - caddy_data:/data
+            - caddy_config:/config
 
 networks:
     backend:
@@ -32,3 +45,5 @@ networks:
 
 volumes:
     db:
+    caddy_data:
+    caddy_config:
