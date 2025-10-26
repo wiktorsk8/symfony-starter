@@ -1,0 +1,125 @@
+{
+	"info": {
+		"_postman_id": "ac0041bd-b6a8-4872-aad3-773cddbbed59",
+		"name": "API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34009299",
+		"_collection_link": "https://dupa77.postman.co/workspace/url-shortener~f2e6c25b-b55c-40cf-b43c-4ca232af2cd2/collection/34009299-ac0041bd-b6a8-4872-aad3-773cddbbed59?action=share&source=collection_link&creator=34009299"
+	},
+	"item": [
+		{
+			"name": "create short link",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"url\": \"https://medium.com/@theqachronicles/creating-a-postman-collection-a-step-by-step-guide-a00cb0c460e1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/short_links",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"short_links"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get short link",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/short_links/20d0cde5-5a06-46da-804f-fa1d94413cc9",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"short_links",
+						"20d0cde5-5a06-46da-804f-fa1d94413cc9"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "redirect by slug",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"url\": \"https://medium.com/@theqachronicles/creating-a-postman-collection-a-step-by-step-guide-a00cb0c460e1\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/2a4685a",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"2a4685a"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": ""
+		}
+	]
+}
