@@ -54,4 +54,24 @@ class ShortLink
     {
         $this->slug = $slug;
     }
+
+
+    public function incrementAccessCounter(): void {
+        // todo
+    }
+
+    public function getAccessLimit(): ?int
+    {
+        return $this->accessLimit;
+    }
+
+    public function getAccessCounter(): int
+    {
+        return $this->accessCounter;
+    }
+
+    public function getIsWhiteListed(): bool
+    {
+        return $this->isWhiteListed;
+    }
 }

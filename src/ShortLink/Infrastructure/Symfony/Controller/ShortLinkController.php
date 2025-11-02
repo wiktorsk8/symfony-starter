@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\ShortLink\Infrastructure\Symfony\Controller;
 
 use App\Shared\Infrastructure\Symfony\Messenger\CommandBus;
+use App\ShortLink\Application\Command\TrackShortLinkClick;
 use App\ShortLink\Application\Exceptions\GetUrlException;
 use App\ShortLink\Application\Queries\GetShortLink;
 use App\ShortLink\Application\Queries\GetUrlQuery;
 use App\ShortLink\Infrastructure\Symfony\Request\CreateShortLink;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -58,10 +60,15 @@ class ShortLinkController extends AbstractController
         return new JsonResponse($dto->toArray());
     }
 
+    /**
+     * @throws Throwable
+     */
     #[Route('/{slug}', methods: ['GET'])]
     public function getUrl(
+        Request $request,
         string $slug,
         GetUrlQuery $getUrlQuery,
+        CommandBus $commandBus,
     ): Response {
         try {
             $url = $getUrlQuery->execute($slug);
@@ -71,6 +78,17 @@ class ShortLinkController extends AbstractController
 
         if (!$url) {
             return new JsonResponse(["message" => "Not found"], Response::HTTP_NOT_FOUND);
+        }
+
+        try {
+            $commandBus->dispatch(new TrackShortLinkClick(
+                slug: $slug,
+                userIdentifier: $this->getUser()?->getUserIdentifier() ?? null,
+                userAgent: $request->headers->get('User-Agent'),
+                ip: $request->getClientIp(),
+            ));
+        } catch (ExceptionInterface $e) {
+            return new JsonResponse(["message" => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return new RedirectResponse($url);
