@@ -2,7 +2,24 @@
 
 namespace App\Shared\DTO;
 
-readonly abstract class DTO
+use App\Shared\Application\Command\Command;
+use Exception;
+
+abstract class DTO
 {
-    public abstract function toArray(): array;
+    /**
+     * @throws Exception
+     */
+    public function toArray(): array
+    {
+        throw new Exception('Not implemented');
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function toCommand(): Command
+    {
+        throw new Exception('Not implemented');
+    }
 }

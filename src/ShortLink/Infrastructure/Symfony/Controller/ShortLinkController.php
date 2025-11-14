@@ -6,6 +6,7 @@ namespace App\ShortLink\Infrastructure\Symfony\Controller;
 
 use App\Shared\Infrastructure\Symfony\Messenger\CommandBus;
 use App\ShortLink\Application\Exceptions\GetUrlException;
+use App\ShortLink\Application\Queries\DTOs\GetUrlDTO;
 use App\ShortLink\Application\Queries\GetShortLink;
 use App\ShortLink\Application\Queries\GetUrlQuery;
 use App\ShortLink\Infrastructure\Symfony\Request\CreateShortLink;
@@ -58,15 +59,21 @@ class ShortLinkController extends AbstractController
         return new JsonResponse($dto->toArray());
     }
 
+    /**
+     * @throws Throwable
+     */
     #[Route('/{slug}', methods: ['GET'])]
     public function getUrl(
         string $slug,
         GetUrlQuery $getUrlQuery,
     ): Response {
         try {
-            $url = $getUrlQuery->execute($slug);
+            $url = $getUrlQuery->execute(new GetUrlDTO(
+                slug: $slug,
+                userIdentifier: $this->getUser()?->getUserIdentifier()
+            ));
         } catch (GetUrlException $e) {
-            return new JsonResponse(["message" => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return new JsonResponse(["message" => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
 
         if (!$url) {

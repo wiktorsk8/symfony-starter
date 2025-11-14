@@ -26,6 +26,18 @@ doctrine:
                 dir: '%kernel.project_dir%/src/ShortLink/Infrastructure/Doctrine/Entity'
                 prefix: 'App\ShortLink\Infrastructure\Doctrine\Entity'
                 alias: ShortLink
+            User:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/User/Infrastructure/Doctrine/Entities'
+                prefix: 'App\User\Infrastructure\Doctrine\Entities'
+                alias: User
+#            App:
+#                type: attribute
+#                is_bundle: false
+#                dir: '%kernel.project_dir%/src/Entity'
+#                prefix: 'App\Entity'
+#                alias: App
         controller_resolver:
             auto_mapping: false
 

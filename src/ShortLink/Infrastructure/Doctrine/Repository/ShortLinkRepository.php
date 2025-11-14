@@ -6,7 +6,6 @@ namespace App\ShortLink\Infrastructure\Doctrine\Repository;
 
 use App\ShortLink\Infrastructure\Doctrine\Entity\ShortLink;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\DBAL\LockMode;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**

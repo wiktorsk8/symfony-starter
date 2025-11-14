@@ -6,7 +6,7 @@ namespace App\ShortLink\Application\Queries\Result;
 
 use App\Shared\DTO\DTO;
 
-final readonly class ShortLinkDTO extends DTO
+final class ShortLinkDTO extends DTO
 {
     public function __construct(
         public string $id,

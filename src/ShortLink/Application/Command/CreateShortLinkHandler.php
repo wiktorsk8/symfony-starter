@@ -35,11 +35,13 @@ class CreateShortLinkHandler implements CommandHandler
             throw new CreateShortLinkException($e->getMessage(), $e->getCode(), $e);
         }
 
-        $shortLink = new ShortLink();
-
-        $shortLink->setId($command->id);
-        $shortLink->setUrl($command->url);
-        $shortLink->setSlug($slug);
+        $shortLink = new ShortLink(
+            id: $command->id,
+            slug: $slug,
+            url: $command->url,
+            accessLimit: $command->accessLimit,
+            isWhiteListed: $command->isWhiteListed
+        );
 
         $this->repository->save($shortLink, true);
 
