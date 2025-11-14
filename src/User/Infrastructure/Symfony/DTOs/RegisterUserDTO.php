@@ -23,7 +23,7 @@ class RegisterUserDTO extends DTO
     #[Assert\NotBlank(message: 'Password confirmation is required')]
     public ?string $passwordConfirmation = null;
 
-    public function toCommand(): Command
+    public function toCommand(): RegisterUserCommand
     {
         return new RegisterUserCommand(
             id: Uuid::uuid4()->toString(),
