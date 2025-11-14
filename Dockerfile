@@ -24,12 +24,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN set -eux; \
 	install-php-extensions \
-		@composer \
 		apcu \
 		intl \
 		opcache \
 		zip \
 	;
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
 ENV COMPOSER_ALLOW_SUPERUSER=1
@@ -84,9 +85,9 @@ COPY --link composer.* symfony.* ./
 RUN set -eux; \
 	composer install --no-cache --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress
 
+
 # copy sources
-COPY --link . ./
-RUN rm -Rf frankenphp/
+COPY --link --exclude=frankenphp/ . ./
 
 RUN set -eux; \
 	mkdir -p var/cache var/log; \
