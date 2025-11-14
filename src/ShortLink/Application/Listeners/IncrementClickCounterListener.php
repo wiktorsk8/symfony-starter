@@ -16,7 +16,7 @@ class IncrementClickCounterListener
 
     public function onShortLinkAccessed(ShortLinkAccessed $event): void
     {
-        $shortLink = $this->repository->find($event->id);
+        $shortLink = $this->repository->findBySlug($event->slug);
         $shortLink->incrementClickCounter();
         $this->repository->save($shortLink, true);
     }
