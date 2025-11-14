@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace App\ShortLink\Infrastructure\Symfony\Controller;
 
 use App\Shared\Infrastructure\Symfony\Messenger\CommandBus;
-use App\ShortLink\Application\Command\TrackShortLinkClick;
 use App\ShortLink\Application\Exceptions\GetUrlException;
+use App\ShortLink\Application\Queries\DTOs\GetUrlDTO;
 use App\ShortLink\Application\Queries\GetShortLink;
 use App\ShortLink\Application\Queries\GetUrlQuery;
 use App\ShortLink\Infrastructure\Symfony\Request\CreateShortLink;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -65,30 +64,20 @@ class ShortLinkController extends AbstractController
      */
     #[Route('/{slug}', methods: ['GET'])]
     public function getUrl(
-        Request $request,
         string $slug,
         GetUrlQuery $getUrlQuery,
-        CommandBus $commandBus,
     ): Response {
         try {
-            $url = $getUrlQuery->execute($slug);
+            $url = $getUrlQuery->execute(new GetUrlDTO(
+                slug: $slug,
+                userIdentifier: $this->getUser()?->getUserIdentifier()
+            ));
         } catch (GetUrlException $e) {
-            return new JsonResponse(["message" => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return new JsonResponse(["message" => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
 
         if (!$url) {
             return new JsonResponse(["message" => "Not found"], Response::HTTP_NOT_FOUND);
-        }
-
-        try {
-            $commandBus->dispatch(new TrackShortLinkClick(
-                slug: $slug,
-                userIdentifier: $this->getUser()?->getUserIdentifier() ?? null,
-                userAgent: $request->headers->get('User-Agent'),
-                ip: $request->getClientIp(),
-            ));
-        } catch (ExceptionInterface $e) {
-            return new JsonResponse(["message" => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return new RedirectResponse($url);

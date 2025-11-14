@@ -45,9 +45,4 @@ class ShortLinkRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
-
-    public function incrementAccessCounter(ShortLink $entity): void
-    {
-        $this->save($entity);
-    }
 }

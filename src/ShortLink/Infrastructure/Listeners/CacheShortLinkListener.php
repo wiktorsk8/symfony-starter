@@ -20,6 +20,6 @@ class CacheShortLinkListener
      */
     public function onShortLinkCreated(ShortLinkCreated $event): void
     {
-        $this->repository->cacheUrl($event->slug);
+        $this->repository->getUrl($event->slug);
     }
 }

@@ -21,7 +21,7 @@ class ShortLinkCacheRepository
     /**
      * @throws InvalidArgumentException
      */
-    public function cacheUrl(string $slug): ?ShortLink
+    public function getUrl(string $slug): ?ShortLink
     {
         return $this->cache->get($slug, function (ItemInterface $item) use ($slug): ?ShortLink {
             $item->expiresAfter(3600);
@@ -29,5 +29,13 @@ class ShortLinkCacheRepository
             $this->logger->info('Cache hit for slug: ' . $slug);
             return $shortLink;
         });
+    }
+
+    /**
+     * @throws InvalidArgumentException
+     */
+    public function invalidate(string $slug): void
+    {
+        $this->cache->delete($slug);
     }
 }
